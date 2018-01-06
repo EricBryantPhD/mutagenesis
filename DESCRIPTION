@@ -1,0 +1,19 @@
+Package: mutagenesis
+Title: Mutagenesis
+Version: 0.0.0.9000
+Authors@R: 'Eric Bryant <eeb2139@columbia.edu> [aut, cre]'
+Description: Mutagenesis.
+Depends: R (>= 3.4.3)
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Imports:
+  Biostrings,
+  R.utils,
+  magrittr,
+  stringi,
+  stringr,
+  tibble,
+  tidyr,
+  tools
