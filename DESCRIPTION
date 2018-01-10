@@ -10,8 +10,10 @@ LazyData: true
 RoxygenNote: 6.0.1
 Imports:
   Biostrings,
-  R.utils,
+  dplyr,
+  fuzzyjoin,
   magrittr,
+  R.utils,
   stringi,
   stringr,
   tibble,

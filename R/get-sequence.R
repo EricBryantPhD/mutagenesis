@@ -1,5 +1,5 @@
 #' Get genomic sequences given ranges
-
+#'
 #' @param chr `[character]`
 #'
 #'   Chromosome names. Must match names returned by `names(genome)`.
@@ -44,11 +44,6 @@ get_genomic_sequence <- function(chr, strand, start, end, genome) {
 #' @export
 
 get_genomic_variant <- function(chr, strand, start, end, vcf, genome) {
-  #end_min <- pmin(end, ref_end)
-  #end_max <- pmax(end, ref_end)
-  #start_min <- pmin(start, ref_start)
-  #start_max <- pmax(start, ref_start)
-  #alt_width <- stringr::str_length(alt) # TODO
   upstream <- get_sequence_range(genome, chr, '+', start, ref_start - 1L)
   dnstream <- get_sequence_range(genome, chr, '+', ref_end + 1L, end)
   plus_strand <- stringr::str_c(upstream, alt, dnstream)
