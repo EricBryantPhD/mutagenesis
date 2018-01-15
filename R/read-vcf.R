@@ -6,16 +6,16 @@
 #'
 #' @param col_types `[col_spec|character(1)|NULL]` Either NULL, or a valid
 #'   column specification (for more details, see [readr::read_tsv]). Defaults
-#'   to the following expected VCF columns:
+#'   to only read the following expected VCF columns:
 #'
-#'     - CHROM `[character]`
-#'     - POS `[integer]`
-#'     - ID `[character]`
-#'     - REF `[character]`
-#'     - ALT `[character]`
-#'     - QUAL `[double]`
-#'     - FILTER `[character]`
-#'     - INFO `[character]`
+#'     - CHROM [character]
+#'     - POS [integer]
+#'     - ID [character]
+#'     - REF [character]
+#'     - ALT [character]
+#'     - QUAL [double]
+#'     - FILTER [character]
+#'     - INFO [character]
 #'
 #' @param callback `[function(x, pos)|NULL]` A function with arguments `x` and
 #'   `pos` that takes a dataframe as `x` and returns a dataframe (`pos` is used
@@ -32,7 +32,7 @@
 #'   information is stored as an attribute accessible via `attr(x, 'vcf')`.
 #'
 #' @references
-#'   - https://faculty.washington.edu/browning/beagle/intro-to-vcf.html
+#'   - [Introduction to VCF](https://faculty.washington.edu/browning/beagle/intro-to-vcf.html)
 #'
 #' @importFrom tools file_ext
 #' @importFrom R.utils gunzip bunzip2
@@ -43,18 +43,22 @@
 #' @md
 
 read_vcf <- function(file,
-                     col_types = readr::cols_only(
-                       CHROM  = readr::col_character(),
-                       POS    = readr::col_integer(),
-                       ID     = readr::col_character(),
-                       REF    = readr::col_character(),
-                       ALT    = readr::col_character(),
-                       QUAL   = readr::col_double(),
-                       FILTER = readr::col_character(),
-                       INFO   = readr::col_character()
-                     ),
+                     col_types = NULL,
                      callback = NULL,
                      ...) {
+
+  if (is.null(col_types)) {
+    col_types <- readr::cols_only(
+      CHROM  = readr::col_character(),
+      POS    = readr::col_integer(),
+      ID     = readr::col_character(),
+      REF    = readr::col_character(),
+      ALT    = readr::col_character(),
+      QUAL   = readr::col_double(),
+      FILTER = readr::col_character(),
+      INFO   = readr::col_character()
+    )
+  }
 
   # Temporarily extract gz or bz2 compressed files
   file <-

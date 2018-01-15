@@ -4,11 +4,7 @@
 \alias{read_vcf}
 \title{Read a VCF table}
 \usage{
-read_vcf(file, col_types = readr::cols_only(CHROM = readr::col_character(),
-  POS = readr::col_integer(), ID = readr::col_character(), REF =
-  readr::col_character(), ALT = readr::col_character(), QUAL =
-  readr::col_double(), FILTER = readr::col_character(), INFO =
-  readr::col_character()), callback = NULL, ...)
+read_vcf(file, col_types = NULL, callback = NULL, ...)
 }
 \arguments{
 \item{file}{\code{[character(1)]} Path to VCF file. Supported file extensions:
@@ -17,14 +13,14 @@ duration of the R session via \link[R.utils:gunzip]{R.utils::gunzip}, or \link[R
 
 \item{col_types}{\code{[col_spec|character(1)|NULL]} Either NULL, or a valid
 column specification (for more details, see \link[readr:read_tsv]{readr::read_tsv}). Defaults
-to the following expected VCF columns:\preformatted{- CHROM `[character]`
-- POS `[integer]`
-- ID `[character]`
-- REF `[character]`
-- ALT `[character]`
-- QUAL `[double]`
-- FILTER `[character]`
-- INFO `[character]`
+to only read the following expected VCF columns:\preformatted{- CHROM [character]
+- POS [integer]
+- ID [character]
+- REF [character]
+- ALT [character]
+- QUAL [double]
+- FILTER [character]
+- INFO [character]
 }}
 
 \item{callback}{\code{[function(x, pos)|NULL]} A function with arguments \code{x} and
@@ -47,6 +43,6 @@ Read a VCF table
 }
 \references{
 \itemize{
-\item https://faculty.washington.edu/browning/beagle/intro-to-vcf.html
+\item \href{https://faculty.washington.edu/browning/beagle/intro-to-vcf.html}{Introduction to VCF}
 }
 }
