@@ -4,7 +4,7 @@
 \alias{read_vcf}
 \title{Read a VCF table}
 \usage{
-read_vcf(file, col_types = NULL, callback = NULL, ...)
+read_vcf(file, col_types = NULL, callback = NULL, chunk_size = 1e+06, ...)
 }
 \arguments{
 \item{file}{\code{[character(1)]} Path to VCF file. Supported file extensions:
@@ -27,9 +27,10 @@ to only read the following expected VCF columns:\preformatted{- CHROM [character
 \code{pos} that takes a dataframe as \code{x} and returns a dataframe (\code{pos} is used
 internally). This is usefull for filtering or summarizing VCF files that
 are otherwise too big to read into memory. See \link[readr:DataFrameCallback]{readr::DataFrameCallback}
-and \link[readr:read_tsv_chunked]{readr::read_tsv_chunked} for examples. Note that when using a
-callback, the default value of \code{chunk_size} for \link[readr:read_tsv_chunked]{readr::read_tsv_chunked}
-has been increased to \code{1e6}. Defaults to \code{NULL}.}
+and \link[readr:read_tsv_chunked]{readr::read_tsv_chunked} for examples. Defaults to \code{NULL}.}
+
+\item{chunk_size}{\code{[integer(1)]} Number of lines to read for each chunk
+when using a callback. Defaults to \code{1e6}.}
 
 \item{...}{Arguments passed to \link[readr:read_tsv]{readr::read_tsv}, or
 \link[readr:read_tsv_chunked]{readr::read_tsv_chunked} if \code{callback} is not \code{NULL}.}

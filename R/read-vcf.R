@@ -21,9 +21,10 @@
 #'   `pos` that takes a dataframe as `x` and returns a dataframe (`pos` is used
 #'   internally). This is usefull for filtering or summarizing VCF files that
 #'   are otherwise too big to read into memory. See [readr::DataFrameCallback]
-#'   and [readr::read_tsv_chunked] for examples. Note that when using a
-#'   callback, the default value of `chunk_size` for [readr::read_tsv_chunked]
-#'   has been increased to `1e6`. Defaults to `NULL`.
+#'   and [readr::read_tsv_chunked] for examples. Defaults to `NULL`.
+#'
+#' @param chunk_size `[integer(1)]` Number of lines to read for each chunk
+#'   when using a callback. Defaults to `1e6`.
 #'
 #' @param ... Arguments passed to [readr::read_tsv], or
 #'   [readr::read_tsv_chunked] if `callback` is not `NULL`.
@@ -45,6 +46,7 @@
 read_vcf <- function(file,
                      col_types = NULL,
                      callback = NULL,
+                     chunk_size = 1e6,
                      ...) {
 
   if (is.null(col_types)) {
@@ -97,9 +99,6 @@ read_vcf <- function(file,
         ...
       )
   } else {
-
-    if (missing(chunk_size)) chunk_size <- 1e6
-
     vcf <-
       readr::read_tsv_chunked(
         file,
