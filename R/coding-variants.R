@@ -36,8 +36,11 @@ inner_join_cds_vcf <- function(cds,
   vcf$start      <- vcf[[vcf_keys['start']]]
   vcf$end        <- vcf[[vcf_keys['end']]]
 
-  cds %>%
-    fuzzyjoin::genome_inner_join(vcf, by = c('chromosome', 'start', 'end')) %>%
+  if (!any(unique(cds$chromosome) %in% unique(vcf$chromosome))) {
+    stop('There were no matching chromosome names between cds and vcf tables.')
+  }
+
+  fuzzyjoin::genome_inner_join(cds, vcf, by = c('chromosome', 'start', 'end')) %>%
     select(
       # CDS columns
       tx, exon, chr, exon_strand = strand,
