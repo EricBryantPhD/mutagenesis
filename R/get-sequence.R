@@ -29,6 +29,7 @@
 #' [Biostrings::readDNAStringSet].
 #'
 #' @importFrom Biostrings getSeq
+#' @importFrom GenomicRanges GRanges
 #' @importFrom tibble tibble
 #' @export
 #' @md

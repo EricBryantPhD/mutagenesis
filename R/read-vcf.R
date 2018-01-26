@@ -1,8 +1,9 @@
-#' Read a VCF table
+#' Read and write VCF tables
 #'
 #' @param file `[character(1)]` Path to VCF file. Supported file extensions:
 #'   `.vcf`, `.vcf.gz`, `.vcf.bz2`. Compressed files are unzipped for the
 #'   duration of the R session via [R.utils::gunzip], or [R.utils::bunzip2].
+#'   `write_vcf` only supports `.vcf`.
 #'
 #' @param col_types `[col_spec|character(1)|NULL]` Either NULL, or a valid
 #'   column specification (for more details, see [readr::read_tsv]). Defaults
@@ -29,11 +30,16 @@
 #' @param ... Arguments passed to [readr::read_tsv], or
 #'   [readr::read_tsv_chunked] if `callback` is not `NULL`.
 #'
+#' @param vcf `[vcf]` A VCF data frame. Simply a data frame with a `vcf` class
+#'   and an attribute that contains VCF header information.
+#'
 #' @return An object with class `vcf` (inherits `data.frame` class). VCF header
 #'   information is stored as an attribute accessible via `attr(x, 'vcf')`.
 #'
 #' @references
 #'   - [Introduction to VCF](https://faculty.washington.edu/browning/beagle/intro-to-vcf.html)
+#'
+#' @examples
 #'
 #' @importFrom tools file_ext
 #' @importFrom R.utils gunzip bunzip2
@@ -93,7 +99,7 @@ read_vcf <- function(file,
       readr::read_tsv(
         file,
         skip      = header,
-        na        = '.',
+        na        = c('NA', '.'),
         col_names = col_names,
         col_types = col_types,
         ...
@@ -103,7 +109,7 @@ read_vcf <- function(file,
       readr::read_tsv_chunked(
         file,
         skip       = header,
-        na         = '.',
+        na         =  c('NA', '.'),
         col_names  = col_names,
         col_types  = col_types,
         chunk_size = chunk_size,
@@ -112,8 +118,28 @@ read_vcf <- function(file,
       )
   }
 
+  # Convert missing ALT (i.e. '.') to empty string
+  vcf <- mutate(vcf, ALT = dplyr::if_else(is.na(ALT), '', ALT))
+
   # Append metadata as an attribute
   attr(vcf, 'vcf') <- readr::read_lines(file, n_max = header - 1L)
   class(vcf) <- c('vcf', class(vcf))
   return(vcf)
+}
+
+#' @rdname read_vcf
+#' @export
+write_vcf <- function(vcf, file) {
+
+  # Get header lines
+  vcf_header <- attr(vcf, 'vcf')
+  tbl_header <- paste0('#', paste(names(vcf), collapse = '\t'))
+
+  # Convert missing ALT back to '.'
+  vcf <- mutate(vcf, ALT = dplyr::if_else(ALT == '', '.', ALT))
+
+  # Write to file
+  readr::write_lines(vcf_header, file)
+  readr::write_lines(tbl_header, file, append = TRUE)
+  readr::write_tsv(vcf, file, na = '.', append = TRUE)
 }

@@ -11,17 +11,45 @@
 #' `cds`, `vcf`, and `genome` should have matching chromosome naming
 #' conventions.
 #'
-#' `cds` must contain the following columns: `tx`, `chr`, `strand`, `start`,
-#' `end` and `exon_frame` with rows corresponding to exon coordinates.
-#' `exon_frame` can be added via [add_exon_details].
+#' `cds` must contain the following columns (rows represent exon coordinates):
+#' `tx`, `exon`, `chr`, `strand`, `start`, and `end`
 #'
-#' `vcf` must contain the following standard VCF columns:
+#' `vcf` must contain the following standard VCF columns (rows represent variants):
 #' `CHROM`, `POS`, `REF`, `ALT`.
+#'
+#' @examples
+#' if (requireNamespace('BSgenome.Hsapiens.UCSC.hg38')) {
+#'   library(tidyverse)
+#'   library(mutagenesis)
+#'
+#'   # Example files provided in this package
+#'   cds_file <- system.file('extdata/CDS.csv', package = 'mutagenesis')
+#'   vcf_file <- system.file('extdata/VCF.vcf', package = 'mutagenesis')
+#'
+#'   # Coding sequence coordinates, variants, and a reference genome
+#'   # are required to predict variant effects
+#'   cds    <- read_csv(cds_file)
+#'   vcf    <- read_vcf(vcf_file)
+#'   genome <- BSgenome.Hsapiens.UCSC.hg38::Hsapiens
+#'   vep    <- predict_variant_effect(cds, vcf, genome)
+#'
+#'   # An example summary of effects
+#'   vep %>%
+#'     select(
+#'       gene, ID:INFO, ref_cds, alt_cds, ref_aa, alt_aa, mutation_type,
+#'       exon_boundary_dist, vcf_start, vcf_end, exon_start, exon_end
+#'     ) %>%
+#'     distinct() %>%
+#'     count(ref_aa, mutation_type) %>%
+#'     arrange(mutation_type, -n)
+#' }
 #'
 #' @export
 #' @md
 
-add_variant_effect_prediction <- function(cds, vcf, genome) {
+predict_variant_effect <- function(cds, vcf, genome) {
+
+  if (!hasName(cds, 'exon_frame')) cds <- add_exon_details(cds)
 
   # Prepare cds and vcf tables
   vcf <-

@@ -2,14 +2,18 @@
 % Please edit documentation in R/read-vcf.R
 \name{read_vcf}
 \alias{read_vcf}
-\title{Read a VCF table}
+\alias{write_vcf}
+\title{Read and write VCF tables}
 \usage{
 read_vcf(file, col_types = NULL, callback = NULL, chunk_size = 1e+06, ...)
+
+write_vcf(vcf, file)
 }
 \arguments{
 \item{file}{\code{[character(1)]} Path to VCF file. Supported file extensions:
 \code{.vcf}, \code{.vcf.gz}, \code{.vcf.bz2}. Compressed files are unzipped for the
-duration of the R session via \link[R.utils:gunzip]{R.utils::gunzip}, or \link[R.utils:bunzip2]{R.utils::bunzip2}.}
+duration of the R session via \link[R.utils:gunzip]{R.utils::gunzip}, or \link[R.utils:bunzip2]{R.utils::bunzip2}.
+\code{write_vcf} only supports \code{.vcf}.}
 
 \item{col_types}{\code{[col_spec|character(1)|NULL]} Either NULL, or a valid
 column specification (for more details, see \link[readr:read_tsv]{readr::read_tsv}). Defaults
@@ -34,13 +38,19 @@ when using a callback. Defaults to \code{1e6}.}
 
 \item{...}{Arguments passed to \link[readr:read_tsv]{readr::read_tsv}, or
 \link[readr:read_tsv_chunked]{readr::read_tsv_chunked} if \code{callback} is not \code{NULL}.}
+
+\item{vcf}{\code{[vcf]} A VCF data frame. Simply a data frame with a \code{vcf} class
+and an attribute that contains VCF header information.}
 }
 \value{
 An object with class \code{vcf} (inherits \code{data.frame} class). VCF header
 information is stored as an attribute accessible via \code{attr(x, 'vcf')}.
 }
 \description{
-Read a VCF table
+Read and write VCF tables
+}
+\examples{
+
 }
 \references{
 \itemize{
