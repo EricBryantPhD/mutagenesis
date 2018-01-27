@@ -118,8 +118,12 @@ read_vcf <- function(file,
       )
   }
 
-  # Convert missing ALT (i.e. '.') to empty string
-  vcf <- mutate(vcf, ALT = dplyr::if_else(is.na(ALT), '', ALT))
+  # Convert missing REF/ALT (i.e. '.') to empty string
+  vcf <- vcf %>%
+    mutate(
+      REF = dplyr::if_else(is.na(REF), '', REF),
+      ALT = dplyr::if_else(is.na(ALT), '', ALT)
+    )
 
   # Append metadata as an attribute
   attr(vcf, 'vcf') <- readr::read_lines(file, n_max = header - 1L)
@@ -136,7 +140,11 @@ write_vcf <- function(vcf, file) {
   tbl_header <- paste0('#', paste(names(vcf), collapse = '\t'))
 
   # Convert missing ALT back to '.'
-  vcf <- mutate(vcf, ALT = dplyr::if_else(ALT == '', '.', ALT))
+  vcf <- vcf %>%
+    mutate(
+      REF = dplyr::if_else(REF == '', '.', REF),
+      ALT = dplyr::if_else(ALT == '', '.', ALT)
+    )
 
   # Write to file
   readr::write_lines(vcf_header, file)

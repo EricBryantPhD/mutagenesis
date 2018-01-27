@@ -49,9 +49,9 @@
 
 predict_variant_effect <- function(cds, vcf, genome) {
 
+  # Prepare cds and vcf tables
   if (!hasName(cds, 'exon_frame')) cds <- add_exon_details(cds)
 
-  # Prepare cds and vcf tables
   vcf <-
     vcf %>%
     mutate(
@@ -60,15 +60,15 @@ predict_variant_effect <- function(cds, vcf, genome) {
       # Width of ref used to determine CDS join (i.e. start/end)
       ref_length  = str_length(REF),
       alt_length  = str_length(ALT),
-      # Missing has length 0
-      ref_length  = ifelse(is.na(ref_length), 0L, ref_length),
-      alt_length  = ifelse(is.na(alt_length), 0L, alt_length),
+      # Define VCF end and start based on ref_length
+      # Caveats: fails for complex variants and missing should be encoded with
+      # an empty string.
       start       = POS,
       end         = start + (ref_length - 1L)
     )
 
   # Join vcf and cds exons by overlapping coordinates
-  cds_keys <- c('chromosome' = 'chr', 'start' = 'start', 'end' = 'end')
+  cds_keys <- c('chromosome' = 'chr',    'start' = 'start', 'end' = 'end')
   vcf_keys <- c('chromosome' = 'CHROM' , 'start' = 'start', 'end' = 'end')
   joined <- mutagenesis::inner_join_cds_vcf(cds, vcf, cds_keys, vcf_keys)
 
@@ -135,7 +135,6 @@ predict_variant_effect <- function(cds, vcf, genome) {
         variant_type == 'Complex'                                     ~ 'Complex',
         splicing_type != 'Within exon'                                ~ 'Splicing',
         variant_type == 'Indel' & (ref_length - alt_length) %% 3 != 0 ~ 'Frameshift',
-        variant_type == 'Indel'                                       ~ 'Indel',
         ref_aa == alt_aa                                              ~ 'Silent',
         ref_aa != alt_aa & str_detect(alt_aa, '[*]')                  ~ 'Nonsense',
         ref_aa != alt_aa                                              ~ 'Missense'
