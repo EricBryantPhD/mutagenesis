@@ -59,7 +59,6 @@ predict_variant_effect <- function(cds, vcf, genome) {
       vcf_id      = 1:n(),
       # Width of ref used to determine CDS join (i.e. start/end)
       ref_length  = str_length(REF),
-      alt_length  = str_length(ALT),
       # Define VCF end and start based on ref_length
       # Caveats: fails for complex variants and missing should be encoded with
       # an empty string.
@@ -75,6 +74,8 @@ predict_variant_effect <- function(cds, vcf, genome) {
   # Annotate variants
   joined %>%
     mutate(
+      # Must calculate ALT length after separating alleles (done by inner_join_cds_vcf)
+      alt_length  = str_length(ALT),
       # Determine distance of Ref and alt boundaries to 5' of exon
       exon_5prime       = ifelse(exon_strand == '+', exon_start, exon_end),
       vcf_5prime        = ifelse(exon_strand == '+', vcf_start, vcf_end),
